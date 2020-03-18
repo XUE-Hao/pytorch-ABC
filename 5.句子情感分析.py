@@ -37,7 +37,7 @@ LABEL.build_vocab(train_data)
 
 BATCH_SIZE = 64
 
-device = torch.device('duda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # BucketIterator把长度差不多的句子放到同一个batch中，确保每个batch中不会出现太多padding
 train_iterator, valid_iterator, test_iterator = data.BucketIterator.splits(
@@ -200,7 +200,12 @@ model.embed.weight.data.copy_(pretrained_embedding)
 UNK_IDX = TEXT.vocab.stoi[TEXT.unk_token]
 model.embed.weight.data[PAD_IDX] = torch.zeros(EMBEDDING_SIZE)
 model.embed.weight.data[UNK_IDX] = torch.zeros(EMBEDDING_SIZE)
+# 训练模型
+optimizer = torch.optim.Adam(model.parameters())
+crit = nn.BCEWithLogitsLoss()  # 只针对二分类问题
+
 model = model.to(device)
+crit = crit.to(device)
 
 N_EPOCH = 10
 best_valid_acc = 0.
@@ -258,7 +263,12 @@ model.embed.weight.data.copy_(pretrained_embedding)
 UNK_IDX = TEXT.vocab.stoi[TEXT.unk_token]
 model.embed.weight.data[PAD_IDX] = torch.zeros(EMBEDDING_SIZE)
 model.embed.weight.data[UNK_IDX] = torch.zeros(EMBEDDING_SIZE)
+# 训练模型
+optimizer = torch.optim.Adam(model.parameters())
+crit = nn.BCEWithLogitsLoss()  # 只针对二分类问题
+
 model = model.to(device)
+crit = crit.to(device)
 
 N_EPOCH = 10
 best_valid_acc = 0.
